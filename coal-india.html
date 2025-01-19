@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Coal India</title>
+  <link rel="stylesheet" href="coal.css"/>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+            <div class="header">
+                <h1>Coal India Ltd</h1>
+                <div class="price">
+                    <span class="current-price">₹ 376</span>
+                    <span class="percentage">1.75%</span>
+                </div>
+                <p class="time" id="current-time"></p>
+            </div>
+            <div class="links">
+                <a href="#">coalindia.in</a>
+                <span>BSE: 533278</span>
+                <span>NSE: COALINDIA</span>
+            </div>
+            <div class="stats" id="stats">
+                <div class="stat">
+                    <span>Market Cap</span>
+                    <strong>₹ 2,31,595 Cr.</strong>
+                </div>
+                <div class="stat">
+                    <span>Current Price</span>
+                    <strong>₹ 376</strong>
+                </div>
+                <div class="stat">
+                    <span>High / Low</span>
+                    <strong>₹ 545 / 361</strong>
+                </div>
+            </div>
+            <div class="edit-ratio">
+                <input type="text" id="ratio-input" placeholder="Add ratio to table">
+                <button id="edit-ratio-btn">Edit Ratios</button>
+            </div>
+            <a href="project.html" class="btn btn-primary mt-3">Back to Main Table</a>
+            <ul id="ratio-list" class="hidden"></ul>
+        </div>
+</body>
+
+<script>
+   const ratioInput = document.getElementById('ratio-input');
+const statsDiv = document.getElementById('stats');
+const editRatioBtn = document.getElementById('edit-ratio-btn');
+const currentPriceSpan = document.querySelector('.current-price');
+
+// Add new ratio to the table dynamically
+ratioInput.addEventListener('keypress', function (e) {
+    if (e.key === 'Enter' && ratioInput.value.trim() !== '') {
+        const newRatio = document.createElement('div');
+        newRatio.className = 'stat';
+        newRatio.innerHTML = `<span>${ratioInput.value}</span><strong>0</strong>`;
+        statsDiv.appendChild(newRatio);
+        ratioInput.value = ''; // Clear the input field
+    }
+});
+
+// Enable editing for numerical values
+editRatioBtn.addEventListener('click', function () {
+    const allStrongValues = statsDiv.querySelectorAll('.stat strong');
+
+    // Enable editing mode for all <strong> elements
+    allStrongValues.forEach((strongValue) => {
+        strongValue.contentEditable = true;
+        strongValue.style.border = "1px dashed #ccc"; // Add a visual indicator
+    });
+
+    // Save all changes when pressing Enter on any <strong> element
+    statsDiv.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            e.preventDefault(); // Prevent default Enter behavior
+
+            // Disable editing for all <strong> elements and save changes
+            allStrongValues.forEach((strongValue) => {
+                strongValue.contentEditable = false;
+                strongValue.style.border = "none";
+
+                // Update the top "Current Price" if applicable
+                const parentSpan = strongValue.previousElementSibling;
+                if (parentSpan && parentSpan.textContent === "Current Price") {
+                    currentPriceSpan.textContent = strongValue.textContent.trim();
+                }
+            });
+        }
+    });
+});
+    // Update time dynamically
+    function updateTime() {
+        const now = new Date();
+        const options = { year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
+        const formattedTime = now.toLocaleDateString('en-IN', options);
+        document.getElementById('current-time').textContent = formattedTime;
+    }
+
+    updateTime();
+    setInterval(updateTime, 1000); // Update time every second
+</script>
+
+</html>
